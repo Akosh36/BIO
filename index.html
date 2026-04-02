@@ -341,9 +341,43 @@
       background: var(--surface-2);
     }
 
-    .article-card h4 {
-      margin-bottom: 8px;
-      font-size: 1rem;
+    .tab-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font: inherit;
+      transition: 0.2s ease;
+    }
+
+    .tab-btn.active,
+    .tab-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .more-wrap {
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
     }
 
     .article-card p {
@@ -589,24 +623,26 @@
         <section class="section" id="projects">
           <div class="section-title">
             <h2>Featured Projects</h2>
-            <span class="section-subtitle">Portfolio cards with a clean layout</span>
+            <span class="section-subtitle">Two selectable sections inside one page</span>
           </div>
-          <div class="articles">
-            <article class="article-card">
-              <h4>DevOps Learning Portfolio</h4>
-              <p>A collection of notes, practical labs, and deployment experiments presented in a structured way.</p>
-              <a href="#">View project</a>
-            </article>
-            <article class="article-card">
-              <h4>Networking Lab Archive</h4>
-              <p>Summaries of routing, switching, and simulation tasks with screenshots, configs, and outcomes.</p>
-              <a href="#">Read more</a>
-            </article>
-            <article class="article-card">
-              <h4>Academic Writing & Research</h4>
-              <p>Coursework, technical writeups, and presentation-ready materials collected in one portfolio space.</p>
-              <a href="#">Explore</a>
-            </article>
+
+          <div class="tab-controls" id="projectTabs">
+            <button class="tab-btn active" data-tab="portfolioProjects">Projects</button>
+            <button class="tab-btn" data-tab="portfolioArticles">Articles</button>
+          </div>
+
+          <div class="tab-content active" id="portfolioProjects">
+            <div class="articles" id="projectList"></div>
+            <div class="more-wrap">
+              <button class="btn" id="loadMoreProjects">More Projects</button>
+            </div>
+          </div>
+
+          <div class="tab-content" id="portfolioArticles">
+            <div class="articles" id="articlePreviewList"></div>
+            <div class="more-wrap">
+              <button class="btn" id="loadMorePreviewArticles">More Articles</button>
+            </div>
           </div>
         </section>
 
@@ -615,17 +651,9 @@
             <h2>Articles / Notes</h2>
             <span class="section-subtitle">Space for your posts and useful links</span>
           </div>
-          <div class="articles">
-            <article class="article-card">
-              <h4>How I Organize My Technical Study Notes</h4>
-              <p>Short reflections on keeping learning materials clean, searchable, and easy to review.</p>
-              <a href="#comments">Discuss this article</a>
-            </article>
-            <article class="article-card">
-              <h4>My GitHub Pages Portfolio Journey</h4>
-              <p>A simple write-up about turning a CV-style design into a responsive personal website.</p>
-              <a href="#comments">Leave a comment</a>
-            </article>
+          <div class="articles" id="mainArticleList"></div>
+          <div class="more-wrap">
+            <button class="btn" id="loadMoreMainArticles">More</button>
           </div>
         </section>
 
@@ -671,6 +699,134 @@
       body.classList.toggle('dark');
       localStorage.setItem('portfolio-theme', body.classList.contains('dark') ? 'dark' : 'light');
     });
+
+    // =============================
+    // DATA SECTION
+    // Shu joyga siz bemalol yangi project yoki article qo'shsangiz bo'ladi.
+    // Har bir item oddiy object ko'rinishida yozilgan.
+    // =============================
+
+    const projectsData = [
+      { title: 'DevOps Learning Portfolio', text: 'A collection of notes, practical labs, and deployment experiments presented in a structured way.', link: '#', linkText: 'View project' },
+      { title: 'Networking Lab Archive', text: 'Summaries of routing, switching, and simulation tasks with screenshots, configs, and outcomes.', link: '#', linkText: 'Read more' },
+      { title: 'Academic Writing & Research', text: 'Coursework, technical writeups, and presentation-ready materials collected in one portfolio space.', link: '#', linkText: 'Explore' },
+      { title: 'Linux Practice Journal', text: 'Commands, troubleshooting notes, and useful Linux workflows documented clearly.', link: '#', linkText: 'Open' },
+      { title: 'Python Mini Projects', text: 'Simple Python practice projects built for learning logic and clean coding.', link: '#', linkText: 'See details' },
+      { title: 'Embedded Systems Tasks', text: 'Arduino and sensor-based projects with short explanations and code samples.', link: '#', linkText: 'Visit' },
+      { title: 'Database Exercises', text: 'Structured SQL tasks and database design practice in an easy-to-review format.', link: '#', linkText: 'Check project' },
+      { title: 'Cybersecurity Notes', text: 'Study notes about security basics, web vulnerabilities, and safe lab practice.', link: '#', linkText: 'Learn more' },
+      { title: 'Cloud Practice Reports', text: 'Simple reports and summaries from cloud and deployment related exercises.', link: '#', linkText: 'Open report' },
+      { title: 'Portfolio UI Experiments', text: 'Small frontend layout experiments used to improve personal website design.', link: '#', linkText: 'Preview' }
+    ];
+
+    const articlesData = [
+      { title: 'How I Organize My Technical Study Notes', text: 'Short reflections on keeping learning materials clean, searchable, and easy to review.', link: '#comments', linkText: 'Discuss this article' },
+      { title: 'My GitHub Pages Portfolio Journey', text: 'A simple write-up about turning a CV-style design into a responsive personal website.', link: '#comments', linkText: 'Leave a comment' },
+      { title: 'Why Clean UI Matters in Student Portfolios', text: 'A short article about making personal websites easier to read and understand.', link: '#comments', linkText: 'Read discussion' },
+      { title: 'Learning by Building Small Projects', text: 'Why small but complete projects can improve technical skills faster.', link: '#comments', linkText: 'Open article' },
+      { title: 'How I Present My Academic Work Online', text: 'Tips for showing reports, coursework, and project outcomes in one place.', link: '#comments', linkText: 'See comments' },
+      { title: 'Simple Design for Better Readability', text: 'How spacing, contrast, and structure affect website usability.', link: '#comments', linkText: 'Read more' },
+      { title: 'From Notes to Portfolio Content', text: 'Turning personal study materials into useful public-facing portfolio sections.', link: '#comments', linkText: 'View article' },
+      { title: 'Portfolio Writing in a Professional Tone', text: 'Small writing choices that make a student portfolio look more polished.', link: '#comments', linkText: 'Join discussion' },
+      { title: 'Balancing Modern Design and CV Structure', text: 'How to keep a resume-inspired site clean without looking outdated.', link: '#comments', linkText: 'Explore article' },
+      { title: 'A Better Way to Show Learning Progress', text: 'Using articles and projects together to show real growth over time.', link: '#comments', linkText: 'Open discussion' }
+    ];
+
+    // =============================
+    // REUSABLE CARD RENDER FUNCTION
+    // =============================
+
+    function createCard(item) {
+      return `
+        <article class="article-card">
+          <h4>${item.title}</h4>
+          <p>${item.text}</p>
+          <a href="${item.link}">${item.linkText}</a>
+        </article>
+      `;
+    }
+
+    // =============================
+    // LOAD MORE SYSTEM
+    // Boshlanishida 5 ta ko'rinadi.
+    // Har bosilganda yana 5 tadan qo'shiladi.
+    // =============================
+
+    function setupLoadMore(options) {
+      const {
+        data,
+        containerId,
+        buttonId,
+        step = 5
+      } = options;
+
+      const container = document.getElementById(containerId);
+      const button = document.getElementById(buttonId);
+      let visibleCount = step;
+
+      function render() {
+        const visibleItems = data.slice(0, visibleCount);
+        container.innerHTML = visibleItems.map(createCard).join('');
+
+        if (visibleCount >= data.length) {
+          button.style.display = 'none';
+        } else {
+          button.style.display = 'inline-block';
+        }
+      }
+
+      button.addEventListener('click', () => {
+        visibleCount += step;
+        render();
+      });
+
+      render();
+    }
+
+    setupLoadMore({
+      data: projectsData,
+      containerId: 'projectList',
+      buttonId: 'loadMoreProjects',
+      step: 5
+    });
+
+    setupLoadMore({
+      data: articlesData,
+      containerId: 'articlePreviewList',
+      buttonId: 'loadMorePreviewArticles',
+      step: 5
+    });
+
+    setupLoadMore({
+      data: articlesData,
+      containerId: 'mainArticleList',
+      buttonId: 'loadMoreMainArticles',
+      step: 5
+    });
+
+    // =============================
+    // TAB SYSTEM
+    // Featured Projects ichida 2 bo'lim almashadi.
+    // =============================
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const selectedTab = button.dataset.tab;
+
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.classList.remove('active'));
+
+        button.classList.add('active');
+        document.getElementById(selectedTab).classList.add('active');
+      });
+    });
+
+    // =============================
+    // COMMENTS SECTION
+    // =============================
 
     const addCommentBtn = document.getElementById('addCommentBtn');
     const commentList = document.getElementById('commentList');
