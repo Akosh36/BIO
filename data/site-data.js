@@ -23,7 +23,8 @@ const articlesData = [
 ];
 
 const notesData = [
-
+  { title: 'Build Personal Infrastructure', text: 'The idea of building a personal development environment. This environment includes tools, configurations, and workflows tailored for efficient development.'
+     },
   // { title: 'Note Placeholder 6', text: 'Add your next note description here.', link: '#', linkText: 'Open note' }
 ];
 
