@@ -2,7 +2,7 @@ const body = document.body;
 const themeToggle = document.getElementById('themeToggle');
 const themeIcon = document.getElementById('themeIcon');
 const savedTheme = localStorage.getItem('portfolio-theme');
-
+ 
 if (savedTheme === 'dark') {
   body.classList.add('dark');
 }
