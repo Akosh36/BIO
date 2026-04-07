@@ -6,6 +6,7 @@ const completedProjectsData = [
   { title: 'Python Mini Projects', text: 'Simple Python practice projects built for learning logic and clean coding.', link: '#', linkText: 'See details' }
 ];
 
+
 const inProgressProjectsData = [
   { title: 'Embedded Systems Tasks', text: 'Arduino and sensor-based projects with short explanations and code samples.', link: '#', linkText: 'Visit' },
   { title: 'Database Exercises', text: 'Structured SQL tasks and database design practice in an easy-to-review format.', link: '#', linkText: 'Check project' },
